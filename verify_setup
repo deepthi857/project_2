@@ -36,11 +36,11 @@ def check_packages():
         print("  -> All required packages are installed.")
 
 if __name__ == "__main__":
-    check_folders()
-    check_packages()
+    folders_ok = check_folders()
+    packages_ok = check_packages()
 
     print("\n Summary  :")
-    if folders ok and packages ok:
+    if folders_ok and packages_ok:
         print("  -> All required folders and packages are present.")
     else:
         print("  -> Some required folders or packages are missing. Please address the issues above.")
