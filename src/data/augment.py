@@ -1,0 +1,66 @@
+import os
+import cv2
+import albumentations as A
+def build_transform():
+    transform = A.Compose(
+        [
+            A.Rotate(limit=15, p=0.5),
+            A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+            A.GaussNoise(var_limit=(10.0, 50.0), p=0.5),
+        ],
+        bbox_params=A.BboxParams(
+            format="yolo",
+            label_fields=["class_labels"],
+            min_visibility=0.3,
+        ),
+    )
+    return transform
+
+
+def load_yolo_labels(label_path):
+    bboxes = []
+    class_labels = []
+
+    if not os.path.exists(label_path):
+        print(f"Label file {label_path} does not exist.")
+        return bboxes, class_labels
+
+    with open(label_path, "r") as f:
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) != 5:
+                print(f"Invalid label format in {label_path}: {line.strip()}")
+                continue
+            class_id, x_center, y_center, width, height = map(float, parts)
+            bboxes.append([x_center, y_center, width, height])
+            class_labels.append(int(class_id))
+
+    return bboxes, class_labels
+
+
+def test_on_one_image(image_path, label_path, output_path):
+    image = cv2.imread(image_path)
+    if image is None:
+        print(f"Failed to load image: {image_path}")
+        return
+
+    bboxes, class_labels = load_yolo_labels(label_path)
+    if not bboxes:
+        print(f"No valid bounding boxes found in {label_path}.")
+        return
+
+    transform = build_transform()
+
+    augmented = transform(image=image, bboxes=bboxes, class_labels=class_labels)
+    cv2.imwrite(output_path, augmented["image"])
+    print("Original boxes:", bboxes)
+    print("Augmented boxes:", augmented["bboxes"])
+    print(f"Saved test output to: {output_path}")
+
+
+if __name__ == "__main__":
+    test_image_path = "data/raw/NEU-DET/train/images/crazing/crazing_1.jpg"
+    test_label_path = "data/labels/train/crazing_1.txt"
+    output_path = "test_output.jpg"
+
+    test_on_one_image(test_image_path, test_label_path, output_path)
