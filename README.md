@@ -1,40 +1,8 @@
- # Steel Surface Defect Annotation Conversion
+A computer vision pipeline for manufacturing quality control
 
- ## Introduction
+Day 1:Dataset setup and annotation conversion script
+Day 2: Redme added,environment verified 
 
- Steel products may contain different types of surface defects that affect their quality and performance. Manual inspection is time-consuming and may not always be accurate. This project prepares the NEU-DET steel surface defect dataset for automatic defect detection using deep learning.
+NEU-DET dataset with 6 defect classes: crazing, inclusion, patches, pitted_surface, rolled-in_scale, scratches
 
- ## Objective
-
- The objective of this project is to convert the XML annotation files of the NEU-DET dataset into YOLO-compatible text files. The converted annotations can be used to train an object detection model.
-
- ## Methodology
-
- The original annotations are stored in XML format. Each XML file contains the image dimensions, defect class, and bounding-box coordinates. The conversion process reads these XML files, identifies the defect class, extracts the bounding-box coordinates, converts them into normalized YOLO format, and saves the result as a text file.
-
- YOLO annotations use the following format:
-
- ```text
- class_id x_center y_center width height
- ```
-
- The coordinate values are normalized between 0 and 1 according to the image width and height. The annotations are converted separately for the training and validation datasets.
-
- ## Defect Classes
-
- The project includes six steel surface defect classes:
-
- - Crazing
- - Inclusion
- - Patches
- - Pitted surface
- - Rolled-in scale
- - Scratches
-
- ## Expected Result
-
- Each XML annotation file is converted into a corresponding YOLO `.txt` file. These files are stored in the label folders and can be used with YOLO-based object detection frameworks.
-
- ## Conclusion
-
- This project completes an important preprocessing step for steel surface defect detection. Converting the annotations into YOLO format makes the NEU-DET dataset compatible with modern deep learning object detection models. The prepared dataset can be used in the next stage to train and evaluate a model for automatic steel defect detection.
+Python, PyTorch, YOLOv8, OpenCV, FastAPI, Docker
