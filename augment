@@ -5,12 +5,15 @@ def build_transform():
     transform = A.Compose(
         [
             A.Rotate(limit=15, p=0.5),
-            A.RandomBrightnessContrast(bringhtness_limit=0.2, contrast_limit=0.2, p=0.5),
-            A.Gauss_Noise(var_limit=(10.0, 50.0), p=0.5),
-
-        ]
-        bbox_params=A.BboxParams(format="yolo", label_fields=["class_labels"],min_visibility=0.3),
-)
+            A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+            A.GaussNoise(var_limit=(10.0, 50.0), p=0.5),
+        ],
+        bbox_params=A.BboxParams(
+            format="yolo",
+            label_fields=["class_labels"],
+            min_visibility=0.3,
+        ),
+    )
     return transform
 def load_yolo_labels(label_path):
     bboxes = []

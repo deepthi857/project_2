@@ -1,17 +1,20 @@
 import os
 import importlib
+
 REQUIRED_FOLDERS = [
     "data/raw/NEU-DET/train/annotations",
     "data/raw/NEU-DET/validation/annotations",
     "src/data",
     "configs",
 ]
+
 REQUIRED_PACKAGES = [
     "torch",
     "ultralytics",
     "cv2",
     "albumentations",
 ]
+
 
 def check_folders():
     print("Checking folder structure...")
@@ -22,6 +25,8 @@ def check_folders():
             all_ok = False
     if all_ok:
         print("  -> All required folders are present.")
+    return all_ok
+
 
 def check_packages():
     print("Checking required packages...")
@@ -34,12 +39,14 @@ def check_packages():
             all_ok = False
     if all_ok:
         print("  -> All required packages are installed.")
+    return all_ok
+
 
 if __name__ == "__main__":
     folders_ok = check_folders()
     packages_ok = check_packages()
 
-    print("\n Summary  :")
+    print("\nSummary:")
     if folders_ok and packages_ok:
         print("  -> All required folders and packages are present.")
     else:
