@@ -96,3 +96,25 @@ The AP values are averaged across these thresholds and classes.
 
 This provides a more comprehensive evaluation of bounding-box
 localization accuracy.
+## 10. YOLO Ground-Truth Label Format
+
+The NEU defect annotations used in this project follow the YOLO
+bounding-box format.
+
+Each line in a label file contains:
+
+class_id x_center y_center width height
+
+The bounding-box coordinates are normalized to the range 0 to 1.
+
+For example:
+
+0 0.47 0.15 0.82 0.28
+
+Here:
+- 0 represents the defect class ID.
+- x_center and y_center represent the center of the bounding box.
+- width and height represent the normalized dimensions of the box.
+
+A single image can contain multiple bounding boxes, with one
+annotation per line.
