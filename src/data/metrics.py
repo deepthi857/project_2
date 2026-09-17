@@ -1,13 +1,11 @@
 import os
 
-
 def yolo_to_corners(x, y, w, h):
     xmin = x - w / 2
     ymin = y - h / 2
     xmax = x + w / 2
     ymax = y + h / 2
     return xmin, ymin, xmax, ymax
-
 
 def compute_iou(box1, box2):
     x1min, y1min, x1max, y1max = yolo_to_corners(*box1)
@@ -30,7 +28,6 @@ def compute_iou(box1, box2):
         return 0.0
     return inter_area / union_area
 
-
 def load_labels(label_path):
     boxes = []
     if not os.path.exists(label_path):
@@ -43,7 +40,6 @@ def load_labels(label_path):
             cls_id, x, y, w, h = parts
             boxes.append((int(cls_id), float(x), float(y), float(w), float(h)))
     return boxes
-
 
 def match_predictions(pred_boxes, gt_boxes, iou_threshold=0.5):
     matched_gt = set()
@@ -73,15 +69,37 @@ def match_predictions(pred_boxes, gt_boxes, iou_threshold=0.5):
     false_negatives = len(gt_boxes) - len(matched_gt)
     return true_positives, false_positives, false_negatives
 
+def compute_precision_recall(tp, fp, fn):
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    return precision, recall
+
+def evaluate_dataset(labels_dir, iou_threshold=0.5):
+    label_files = [f for f in os.listdir(labels_dir) if f.endswith(".txt")]
+    
+    total_tp = 0
+    total_fp = 0
+    total_fn = 0
+
+    for label_file in label_files:
+        label_path = os.path.join(labels_dir, label_file)
+        gt_boxes = load_labels(label_path)
+
+        tp, fp, fn = match_predictions(gt_boxes, gt_boxes, iou_threshold)
+        total_tp += tp
+        total_fp += fp
+        total_fn += fn
+
+    precision, recall = compute_precision_recall(total_tp, total_fp, total_fn)
+
+    print(f"Evaluated {len(label_files)} label files")
+    print(f"Total TP: {total_tp}, FP: {total_fp}, FN: {total_fn}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
+
+    return precision, recall
+
 
 if __name__ == "__main__":
-    test_label = "data/labels/train/crazing_1.txt"
-    gt_boxes = load_labels(test_label)
-
-    print(f"Loaded {len(gt_boxes)} ground truth boxes from {test_label}")
-
-    tp, fp, fn = match_predictions(gt_boxes, gt_boxes, iou_threshold=0.5)
-    print("Testing with predictions = ground truth (should be perfect match):")
-    print(f"  True Positives: {tp}")
-    print(f"  False Positives: {fp}")
-    print(f"  False Negatives: {fn}")
+    print("Testing on train set (predictions = ground truth, should score perfectly):")
+    evaluate_dataset("data/labels/train", iou_threshold=0.5)
