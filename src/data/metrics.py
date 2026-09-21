@@ -8,6 +8,9 @@ def yolo_to_corners(x, y, w, h):
     return xmin, ymin, xmax, ymax
 
 def compute_iou(box1, box2):
+    if box1[2] < 0 or box1[3] < 0 or box2[2] < 0 or box2[3] < 0:
+        raise ValueError("Bounding box width and height must be non-negative")
+
     x1min, y1min, x1max, y1max = yolo_to_corners(*box1)
     x2min, y2min, x2max, y2max = yolo_to_corners(*box2)
 
