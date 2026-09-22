@@ -5,3 +5,8 @@ yolov8n.pt
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# YOLO training outputs and dataset caches
+runs/
+*.cache
+data/labels/*.cache
