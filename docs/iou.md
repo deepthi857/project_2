@@ -70,7 +70,7 @@ The following hand-built test cases were created:
 
 
 
-All six tests pass.
+All seven tests pass.
 
 
 
@@ -154,5 +154,4 @@ The Day 6 IoU unit tests verify the mathematical behavior of the existing IoU im
 
 
 
-The implementation is ready for the matching logic work planned for Day 7 after invalid-input validation is added.
-
+The implementation is ready for the Day 7 matching logic work.
