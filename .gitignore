@@ -1,3 +1,13 @@
-
+.venv/
+.venv-1/
+venv/
+data/
+runs/
+models/
+*.pt
+__pycache__/
+*.pyc
+test_output.jpg
+verify_output.jpg
+training_log.txt
 bus.jpg
-yolov8n.pt

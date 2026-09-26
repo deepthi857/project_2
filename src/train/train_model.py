@@ -10,36 +10,27 @@ model = YOLO("yolov8n.pt")
 
 results = model.train(
     data="src/configs/data.yaml",
-
-    epochs=10,
-    imgsz=320,
+    epochs=3,
+    imgsz=256,
     batch=2,
     workers=0,
-
     device="cpu",
-
     optimizer="AdamW",
     lr0=0.001,
-
     amp=False,
     cache=False,
-
+    fraction=0.25,
     project="runs/train",
-    name="defect_detection_cpu",
+    name="defect_detection_final",
     exist_ok=True,
-
     val=True,
     save=True,
-
-    # IMPORTANT: don't generate label plots
     plots=False,
-
     seed=0,
-    verbose=True
+    verbose=True,
 )
 
-print()
-print("================================")
+print("\n================================")
 print("TRAINING COMPLETED SUCCESSFULLY")
 print("================================")
-print("Best model:", results.save_dir / "weights" / "best.pt")
+print("Best model:", model.trainer.save_dir / "weights" / "best.pt")
