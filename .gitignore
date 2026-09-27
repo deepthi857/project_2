@@ -11,3 +11,5 @@ test_output.jpg
 verify_output.jpg
 training_log.txt
 bus.jpg
+*.onnx
+*.engine
