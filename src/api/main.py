@@ -1,4 +1,5 @@
 import os
+import time
 
 os.environ["POLARS_SKIP_CPU_CHECK"] = "1"
 
@@ -6,8 +7,12 @@ from fastapi import FastAPI, UploadFile, File
 from ultralytics import YOLO
 import cv2
 import numpy as np
+from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Histogram, Counter
 
 app = FastAPI(title="Defect Detection API")
+
+Instrumentator().instrument(app).expose(app)
 
 CLASSES = [
     "crazing",
@@ -20,6 +25,17 @@ CLASSES = [
 
 MODEL_PATH = "yolov8n.pt"
 model = YOLO(MODEL_PATH)
+
+inference_latency = Histogram(
+    "model_inference_latency_seconds",
+    "Time spent running model inference on a single image"
+)
+
+detections_total = Counter(
+    "defects_detected_total",
+    "Total number of defects detected",
+    ["defect_class"]
+)
 
 
 @app.get("/")
@@ -41,7 +57,10 @@ async def detect_defects(file: UploadFile = File(...)):
     if frame is None:
         return {"error": "Could not decode image"}
 
+    start_time = time.time()
     results = model.predict(frame, conf=0.3, verbose=False)
+    inference_time = time.time() - start_time
+    inference_latency.observe(inference_time)
 
     detections = []
     for result in results:
@@ -51,6 +70,8 @@ async def detect_defects(file: UploadFile = File(...)):
             conf = float(box.conf[0])
             xyxy = box.xyxy[0].tolist()
             cls_name = CLASSES[cls_id] if cls_id < len(CLASSES) else f"class_{cls_id}"
+
+            detections_total.labels(defect_class=cls_name).inc()
 
             detections.append({
                 "class": cls_name,
@@ -65,5 +86,6 @@ async def detect_defects(file: UploadFile = File(...)):
 
     return {
         "detections": detections,
-        "count": len(detections)
+        "count": len(detections),
+        "inference_time_seconds": round(inference_time, 4)
     }
