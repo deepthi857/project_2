@@ -13,3 +13,4 @@ training_log.txt
 bus.jpg
 *.onnx
 *.engine
+yolov8n.zip
