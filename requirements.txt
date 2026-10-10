@@ -41,3 +41,10 @@ ultralytics-thop==2.1.6
 urllib3==2.8.0
 pandas
 scikit-learn
+
+# FastAPI defect detection service
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+prometheus-fastapi-instrumentator==8.1.0
+prometheus-client==0.26.0
+python-multipart==0.0.32
