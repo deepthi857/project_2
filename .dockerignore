@@ -1,0 +1,16 @@
+.venv
+.venv-1
+venv
+.git
+.vscode
+data
+runs
+docs
+__pycache__
+*.pyc
+*.ipynb
+*.zip
+test_output.jpg
+verify_output.jpg
+inference_output.jpg
+training_log.txt
