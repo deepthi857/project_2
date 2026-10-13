@@ -1,20 +1,19 @@
-import os
-
-os.environ["POLARS_SKIP_CPU_CHECK"] = "1"
-
 from ultralytics import YOLO
 
 
-def run_experiment(name, lr0, batch, epochs=2, imgsz=320, fraction=0.1):
-    print(f"\n=== Running experiment: {name} ===")
-    print(f"lr0={lr0}, batch={batch}, epochs={epochs}")
+def run_experiment(name, lr0, batch):
+    print("\n" + "=" * 60)
+    print(f"STARTING EXPERIMENT: {name}")
+    print(f"Learning Rate: {lr0}")
+    print(f"Batch Size: {batch}")
+    print("=" * 60)
 
     model = YOLO("yolov8n.pt")
 
     results = model.train(
         data="src/configs/data.yaml",
-        epochs=epochs,
-        imgsz=imgsz,
+        epochs=2,
+        imgsz=320,
         batch=batch,
         workers=0,
         device="cpu",
@@ -22,48 +21,85 @@ def run_experiment(name, lr0, batch, epochs=2, imgsz=320, fraction=0.1):
         lr0=lr0,
         amp=False,
         cache=False,
-        fraction=fraction,
-        project="runs/train",
+        fraction=0.10,
+        project="runs/tuning",
         name=name,
         exist_ok=True,
         val=True,
         save=True,
         plots=False,
         seed=0,
-        verbose=False,
+        verbose=True,
     )
 
     metrics = results.results_dict
+
     return {
         "name": name,
         "lr0": lr0,
         "batch": batch,
-        "mAP50": metrics.get("metrics/mAP50(B)", None),
-        "mAP50-95": metrics.get("metrics/mAP50-95(B)", None),
-        "precision": metrics.get("metrics/precision(B)", None),
-        "recall": metrics.get("metrics/recall(B)", None),
+        "precision": metrics.get("metrics/precision(B)", 0.0),
+        "recall": metrics.get("metrics/recall(B)", 0.0),
+        "mAP50": metrics.get("metrics/mAP50(B)", 0.0),
+        "mAP50-95": metrics.get("metrics/mAP50-95(B)", 0.0),
     }
 
 
-if __name__ == "__main__":
+def main():
     experiments = [
-        {"name": "tune_lr_low", "lr0": 0.0005, "batch": 2},
-        {"name": "tune_lr_default", "lr0": 0.001, "batch": 2},
-        {"name": "tune_batch_higher", "lr0": 0.001, "batch": 4},
+        {
+            "name": "lr_low_batch2",
+            "lr0": 0.0005,
+            "batch": 2,
+        },
+        {
+            "name": "lr_default_batch2",
+            "lr0": 0.001,
+            "batch": 2,
+        },
+        {
+            "name": "lr_default_batch4",
+            "lr0": 0.001,
+            "batch": 4,
+        },
     ]
 
     all_results = []
-    for exp in experiments:
-        result = run_experiment(exp["name"], exp["lr0"], exp["batch"])
+
+    for experiment in experiments:
+        result = run_experiment(
+            experiment["name"],
+            experiment["lr0"],
+            experiment["batch"],
+        )
+
         all_results.append(result)
 
-    print("\n================================")
+    print("\n" + "=" * 70)
     print("HYPERPARAMETER TUNING SUMMARY")
-    print("================================")
-    for r in all_results:
-        print(f"{r['name']}: lr0={r['lr0']}, batch={r['batch']} "
-              f"-> mAP50={r['mAP50']:.4f}, mAP50-95={r['mAP50-95']:.4f}, "
-              f"precision={r['precision']:.4f}, recall={r['recall']:.4f}")
+    print("=" * 70)
 
-    best = max(all_results, key=lambda r: r["mAP50"] if r["mAP50"] else 0)
-    print(f"\nBest configuration: {best['name']} (mAP50={best['mAP50']:.4f})")
+    print(
+        f"{'Experiment':<22}"
+        f"{'LR':<10}"
+        f"{'Batch':<8}"
+        f"{'mAP50':<10}"
+        f"{'mAP50-95':<12}"
+        f"{'Precision':<12}"
+        f"{'Recall':<10}"
+    )
+
+    for result in all_results:
+        print(
+            f"{result['name']:<22}"
+            f"{result['lr0']:<10}"
+            f"{result['batch']:<8}"
+            f"{result['mAP50']:<10.4f}"
+            f"{result['mAP50-95']:<12.4f}"
+            f"{result['precision']:<12.4f}"
+            f"{result['recall']:<10.4f}"
+        )
+
+
+if __name__ == "__main__":
+    main()
