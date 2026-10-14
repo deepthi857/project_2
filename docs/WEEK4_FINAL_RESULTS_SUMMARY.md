@@ -1,16 +1,16 @@
-\# Week 4 — Final Project Results Summary
+# Week 4 — Final Project Results Summary
 
 
 
-\## 1. Project Overview
+## 1. Project Overview
 
 
 
-\*\*Project:\*\* Real-Time Industrial Defect Detection System (Computer Vision)
+**Project:** Real-Time Industrial Defect Detection System (Computer Vision)
 
 
 
-\*\*Objective:\*\* Develop a computer-vision pipeline for detecting and evaluating metal surface defects using the NEU Metal Surface Defects Database.
+**Objective:** Develop a computer-vision pipeline for detecting and evaluating metal surface defects using the NEU Metal Surface Defects Database.
 
 
 
@@ -18,21 +18,21 @@ The project targets six defect classes:
 
 
 
-1\. Crazing
+1. Crazing
 
-2\. Inclusion
+2. Inclusion
 
-3\. Patches
+3. Patches
 
-4\. Pitted Surface
+4. Pitted Surface
 
-5\. Rolled-in Scale
+5. Rolled-in Scale
 
-6\. Scratches
+6. Scratches
 
 
 
-\## 2. Dataset Summary
+## 2. Dataset Summary
 
 
 
@@ -66,7 +66,7 @@ All validation images are 200 × 200 pixels.
 
 
 
-\## 3. Model and Training Configuration
+## 3. Model and Training Configuration
 
 
 
@@ -98,7 +98,7 @@ The training run was intended to verify the training and evaluation pipeline. On
 
 
 
-\## 4. Baseline Evaluation Results
+## 4. Baseline Evaluation Results
 
 
 
@@ -142,17 +142,17 @@ The small differences between these runs may result from differences in evaluati
 
 
 
-\### Interpretation
+### Interpretation
 
 
 
-\- \*\*Precision:\*\* Measures the proportion of predicted detections that are correct.
+- **Precision:** Measures the proportion of predicted detections that are correct.
 
-\- \*\*Recall:\*\* Measures the proportion of ground-truth objects that the model detects.
+- **Recall:** Measures the proportion of ground-truth objects that the model detects.
 
-\- \*\*mAP@0.5:\*\* Measures mean average precision at an IoU threshold of 0.50.
+- **mAP@0.5:** Measures mean average precision at an IoU threshold of 0.50.
 
-\- \*\*mAP@0.5:0.95:\*\* Evaluates average precision across IoU thresholds from 0.50 to 0.95.
+- **mAP@0.5:0.95:** Evaluates average precision across IoU thresholds from 0.50 to 0.95.
 
 
 
@@ -160,7 +160,7 @@ The baseline results indicate that further training and evaluation are needed be
 
 
 
-\## 5. Evaluation Framework
+## 5. Evaluation Framework
 
 
 
@@ -168,19 +168,19 @@ The project includes evaluation utilities for:
 
 
 
-\- Validation dataset class-distribution analysis.
+- Validation dataset class-distribution analysis.
 
-\- YOLO-format annotation handling.
+- YOLO-format annotation handling.
 
-\- Bounding-box coordinate conversion.
+- Bounding-box coordinate conversion.
 
-\- Intersection over Union (IoU).
+- Intersection over Union (IoU).
 
-\- Precision and recall calculations.
+- Precision and recall calculations.
 
-\- Mean Average Precision (mAP) evaluation.
+- Mean Average Precision (mAP) evaluation.
 
-\- Comparison between predicted detections and ground-truth annotations.
+- Comparison between predicted detections and ground-truth annotations.
 
 
 
@@ -192,7 +192,7 @@ The evaluation workflow also identifies unmatched label files to prevent dataset
 
 
 
-\## 6. ONNX Conversion Validation
+## 6. ONNX Conversion Validation
 
 
 
@@ -230,7 +230,7 @@ The comparison validates prediction equivalence; it does not establish that the 
 
 
 
-\## 7. OpenCV Inference Validation
+## 7. OpenCV Inference Validation
 
 
 
@@ -256,7 +256,7 @@ These results demonstrate a functional inference test but do not establish a ver
 
 
 
-\## 8. FastAPI Validation
+## 8. FastAPI Validation
 
 
 
@@ -268,19 +268,19 @@ The tests verified:
 
 
 
-\- Image upload and decoding.
+- Image upload and decoding.
 
-\- JSON response structure.
+- JSON response structure.
 
-\- Detection count.
+- Detection count.
 
-\- Confidence extraction.
+- Confidence extraction.
 
-\- Bounding-box coordinate extraction.
+- Bounding-box coordinate extraction.
 
-\- Consistency between direct YOLO inference and API inference.
+- Consistency between direct YOLO inference and API inference.
 
-\- Handling of invalid image input.
+- Handling of invalid image input.
 
 
 
@@ -288,7 +288,7 @@ All six class-folder requests returned HTTP 200. An invalid text file returned t
 
 
 
-\### Model limitation
+### Model limitation
 
 
 
@@ -304,7 +304,7 @@ The invalid-image response currently uses HTTP 200, which could be improved to a
 
 
 
-\## 9. Prometheus Latency Validation
+## 9. Prometheus Latency Validation
 
 
 
@@ -336,7 +336,7 @@ The first request was substantially slower than subsequent requests. The seven-r
 
 
 
-\## 10. Performance and Deployment Limitations
+## 10. Performance and Deployment Limitations
 
 
 
@@ -344,45 +344,45 @@ The following limitations remain:
 
 
 
-1\. The documented baseline used only one training epoch.
+1. The documented baseline used only one training epoch.
 
-2\. CPU training and inference are constrained by available hardware.
+2. CPU training and inference are constrained by available hardware.
 
-3\. A verified, sustained end-to-end model FPS benchmark has not been established by the results summarized here.
+3. A verified, sustained end-to-end model FPS benchmark has not been established by the results summarized here.
 
-4\. The API currently loads generic YOLOv8n weights rather than the trained NEU-DET model.
+4. The API currently loads generic YOLOv8n weights rather than the trained NEU-DET model.
 
-5\. API output validation does not establish defect-classification accuracy.
+5. API output validation does not establish defect-classification accuracy.
 
-6\. TensorRT acceleration was not validated in the documented CPU-only environment.
+6. TensorRT acceleration was not validated in the documented CPU-only environment.
 
-7\. Additional testing is required before production deployment.
-
-
-
-\## 11. Recommended Future Work
+7. Additional testing is required before production deployment.
 
 
 
-\- Train the defect-detection model for more epochs when sufficient compute is available.
-
-\- Re-evaluate the trained model using the established validation framework.
-
-\- Ensure the API loads the trained NEU-DET weights.
-
-\- Re-test class mapping and API predictions using the trained model.
-
-\- Measure sustained FPS, latency percentiles, and throughput.
-
-\- Improve invalid-input responses and API error handling.
-
-\- Validate the Docker deployment and document reproducible setup instructions.
-
-\- Investigate class-level performance and remaining detection errors.
+## 11. Recommended Future Work
 
 
 
-\## 12. Conclusion
+- Train the defect-detection model for more epochs when sufficient compute is available.
+
+- Re-evaluate the trained model using the established validation framework.
+
+- Ensure the API loads the trained NEU-DET weights.
+
+- Re-test class mapping and API predictions using the trained model.
+
+- Measure sustained FPS, latency percentiles, and throughput.
+
+- Improve invalid-input responses and API error handling.
+
+- Validate the Docker deployment and document reproducible setup instructions.
+
+- Investigate class-level performance and remaining detection errors.
+
+
+
+## 12. Conclusion
 
 
 
